@@ -7,9 +7,6 @@
 # http://creativecommons.org/licenses/by-nc-sa/3.0/
 # Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
 
-# Import the PWM library so we can control the servos.
-#from RPIO import PWM
-
 # It's a timeywimey thing.
 import time
 
@@ -53,9 +50,6 @@ GPIO.output(GPIO_ButtonR_LED_PIN, False)
 GPIO.setup(Servo1Pin, GPIO.OUT)
 GPIO.setup(Servo2Pin, GPIO.OUT)
 
-# Setup the servo PWM library
-#servo = GPIO.PWM(Servo1Pin, 100)
-
 # I'm going to make some functions that do the servo rotation, 
 # so I don't have to change a ton of code later on if I need to.
 
@@ -77,12 +71,9 @@ def dual_servo_CW(Servo1PIN,Servo2PIN,SleepTime):
   servo2 = GPIO.PWM(Servo2PIN, 50)
   servo1.start(10.5)
   servo2.start(10.5)
-  #servo.set_servo(Servo1PIN, 1200)
-  #servo.set_servo(Servo2PIN, 1200)
   time.sleep(SleepTime)
   servo1.stop()
   servo2.stop()
-  #time.sleep(.25)
 
 # This rotates the feeder wheel Counter Clock Wise (from right to left)
 def servo_CCW(ServoPIN,SleepTime):
@@ -99,8 +90,6 @@ def servo_CCW(ServoPIN,SleepTime):
 # at the same time
 def dual_servo_CCW(Servo1PIN,Servo2PIN,SleepTime):
   # Set servo on Servo1Pin to 2000us (2.0ms)
-  #servo.set_servo(Servo1PIN, 2000)
-  #servo.set_servo(Servo2PIN, 2000)
   servo1 = GPIO.PWM(Servo1PIN, 50)
   servo2 = GPIO.PWM(Servo2PIN, 50)
   servo1.start(4.5)
@@ -108,7 +97,6 @@ def dual_servo_CCW(Servo1PIN,Servo2PIN,SleepTime):
   time.sleep(SleepTime)
   servo1.stop()
   servo2.stop()
-  #time.sleep(.25)
 
 # I created a function to feed the "thing" from the approiate side, based
 # on the user input.  This function calls the servo funcations.
@@ -161,25 +149,18 @@ GPIO.output(BeeperPin, True)
 time.sleep(.25)
 GPIO.output(BeeperPin, False)
 
+# The 1.3 second delay time is about 1/2C of food
+#  YMMV depending on the feeder.
 def feed_cat(CatName):
   if (CatName == "Thor"):
     feed_thing("Right",1.3)
     time.sleep(.25)
-#    feed_thing("Right",.5)
-#    time.sleep(.25)
-#    feed_thing("Right",.5)
-#    time.sleep(.25)
-#    feed_thing("Right",.5)
 
   if (CatName == "Zelda"):
     feed_thing("Left",1.3)
     time.sleep(.25)
-#    feed_thing("Left",.8)
-#    time.sleep(.25)
-#    feed_thing("Left",.5)
-#    time.sleep(.25)
-#    feed_thing("Left",.5)
 
+# This setup is to feed the cat at a specific time.
 def feed_time(Feed_hour,Feed_minute):
   if time.strftime("%H") == "Feed_hour" and time.strftime("%M") == "Feed_minute":
     print "Cat Feeing time!"
@@ -194,34 +175,18 @@ def LeftFeedButton(GPIO_ButtonL_PIN):
 def RightFeedButton(GPIO_ButtonR_PIN):
   feed_cat("Thor")
 
-# This works great if you don't have any static in the enviroment.
+# This works great if you don't have any static-electricty in the enviroment.
+# This function will detect when the button is pushed, and call the approiate function.
 GPIO.add_event_detect(GPIO_ButtonL_PIN, GPIO.RISING, callback=LeftFeedButton, bouncetime=500)
 GPIO.add_event_detect(GPIO_ButtonR_PIN, GPIO.RISING, callback=RightFeedButton, bouncetime=500)
 
 # This is the main loop where we wait for stuff to happen!
 while True:
-  #now = datetime.datetime.now()
-  #print now.time()
-  time.sleep(1)
-
   # First off, lets turn the LEDs for the buttons on!
   GPIO.output(GPIO_ButtonL_LED_PIN, True)
   GPIO.output(GPIO_ButtonR_LED_PIN, True)
 
-  # Now lets evaluate if a button is bushed...
-  # If both buttons are pushed, call the feed_thing function, feeding both hoppers for X seconds.
-  #if ( GPIO.input(GPIO_ButtonL_PIN) == True and GPIO.input(GPIO_ButtonR_PIN) == True ):
-    #feed_thing("Both",2)
-
-  # If only the left button is pushed, feed from the left hopper for half a second.
-  # elif ( GPIO.input(GPIO_ButtonL_PIN) == True ):
-  #  feed_cat("Zelda")
-
-  # If only the right button is pushed, feed from the right hopper for half a second.
-  #elif ( GPIO.input(GPIO_ButtonR_PIN) == True ):
-  #  feed_cat("Thor")
-
-  #feed_time("22","10")
+  # Uncomment the stuff below if you want to feed your cats twice a day.
   #if time.strftime("%H") == "20" and time.strftime("%M") == "30":
   #  print "Cat Feeing time!"
   #  feed_cat("Zelda")
