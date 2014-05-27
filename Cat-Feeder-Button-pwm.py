@@ -8,7 +8,7 @@
 # Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
 
 # Import the PWM library so we can control the servos.
-from RPIO import PWM
+#from RPIO import PWM
 
 # It's a timeywimey thing.
 import time
@@ -49,8 +49,12 @@ GPIO.output(BeeperPin, False)
 GPIO.output(GPIO_ButtonL_LED_PIN, False)
 GPIO.output(GPIO_ButtonR_LED_PIN, False)
 
+# Setup the Servos Pins
+GPIO.setup(Servo1Pin, GPIO.OUT)
+GPIO.setup(Servo2Pin, GPIO.OUT)
+
 # Setup the servo PWM library
-servo = PWM.Servo()
+#servo = GPIO.PWM(Servo1Pin, 100)
 
 # I'm going to make some functions that do the servo rotation, 
 # so I don't have to change a ton of code later on if I need to.
@@ -58,41 +62,52 @@ servo = PWM.Servo()
 # This rotates the feeder wheel Clock Wise (from left to right)
 def servo_CW(ServoPIN,SleepTime):
   # Set servo on Servo1Pin to 1200us (1.2ms)
-  servo.set_servo(ServoPIN, 1200)
+  servo = GPIO.PWM(ServoPIN, 50)
+  servo.start(10.5)
   time.sleep(SleepTime)
-  servo.stop_servo(ServoPIN)
-  time.sleep(.25)
+  servo.stop()
+  time.sleep(.05)
 
 # This rotates both feeder wheels Clock Wise (from left to right)
 # at the same time
 def dual_servo_CW(Servo1PIN,Servo2PIN,SleepTime):
   # Set servo on Servo1Pin to 1200us (1.2ms)
   # This rotates the servo CW.
-  servo.set_servo(Servo1PIN, 1200)
-  servo.set_servo(Servo2PIN, 1200)
+  servo1 = GPIO.PWM(Servo1PIN, 50)
+  servo2 = GPIO.PWM(Servo2PIN, 50)
+  servo1.start(10.5)
+  servo2.start(10.5)
+  #servo.set_servo(Servo1PIN, 1200)
+  #servo.set_servo(Servo2PIN, 1200)
   time.sleep(SleepTime)
-  servo.stop_servo(Servo1PIN)
-  servo.stop_servo(Servo2PIN)
+  servo1.stop()
+  servo2.stop()
   #time.sleep(.25)
 
 # This rotates the feeder wheel Counter Clock Wise (from right to left)
 def servo_CCW(ServoPIN,SleepTime):
   # Set servo on Servo1Pin to 2000s (2.0ms)
-  servo.set_servo(ServoPIN, 2000)
+  #servo.set_servo(ServoPIN, 2000)
+  servo = GPIO.PWM(ServoPIN, 50)
+  servo.start(4.5)
   time.sleep(SleepTime)
   # Clear servo on Servo1Pin
-  servo.stop_servo(ServoPIN)
+  servo.stop()
   #time.sleep(.25)
 
 # This rotates both feeder wheels Counter Clock Wise (from right to left)
 # at the same time
 def dual_servo_CCW(Servo1PIN,Servo2PIN,SleepTime):
-  # Set servo on Servo1Pin to 1200us (1.2ms)
-  servo.set_servo(Servo1PIN, 2000)
-  servo.set_servo(Servo2PIN, 2000)
+  # Set servo on Servo1Pin to 2000us (2.0ms)
+  #servo.set_servo(Servo1PIN, 2000)
+  #servo.set_servo(Servo2PIN, 2000)
+  servo1 = GPIO.PWM(Servo1PIN, 50)
+  servo2 = GPIO.PWM(Servo2PIN, 50)
+  servo1.start(4.5)
+  servo2.start(4.5)
   time.sleep(SleepTime)
-  servo.stop_servo(Servo1PIN)
-  servo.stop_servo(Servo2PIN)
+  servo1.stop()
+  servo2.stop()
   #time.sleep(.25)
 
 # I created a function to feed the "thing" from the approiate side, based
