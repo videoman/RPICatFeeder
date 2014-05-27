@@ -129,7 +129,7 @@ def feed_thing(HopperSide,FeedTime):
      GPIO.output(BeeperPin, False)
      GPIO.output(GPIO_ButtonR_LED_PIN, True)
      print "Ok, food is coming out the right bin!"
-     servo_CW(Servo2Pin,FeedTime)
+     servo_CCW(Servo2Pin,FeedTime)
 
    if(HopperSide == "Both"):
      GPIO.output(GPIO_ButtonL_LED_PIN, False)
@@ -188,6 +188,16 @@ def feed_time(Feed_hour,Feed_minute):
     feed_cat("Thor")
     time.sleep(60)
 
+def LeftFeedButton(GPIO_ButtonL_PIN):
+  feed_cat("Zelda")
+
+def RightFeedButton(GPIO_ButtonR_PIN):
+  feed_cat("Thor")
+
+# This works great if you don't have any static in the enviroment.
+GPIO.add_event_detect(GPIO_ButtonL_PIN, GPIO.RISING, callback=LeftFeedButton, bouncetime=500)
+GPIO.add_event_detect(GPIO_ButtonR_PIN, GPIO.RISING, callback=RightFeedButton, bouncetime=500)
+
 # This is the main loop where we wait for stuff to happen!
 while True:
   #now = datetime.datetime.now()
@@ -200,16 +210,16 @@ while True:
 
   # Now lets evaluate if a button is bushed...
   # If both buttons are pushed, call the feed_thing function, feeding both hoppers for X seconds.
-  if ( GPIO.input(GPIO_ButtonL_PIN) == True and GPIO.input(GPIO_ButtonR_PIN) == True ):
-    feed_thing("Both",2)
+  #if ( GPIO.input(GPIO_ButtonL_PIN) == True and GPIO.input(GPIO_ButtonR_PIN) == True ):
+    #feed_thing("Both",2)
 
   # If only the left button is pushed, feed from the left hopper for half a second.
-  elif ( GPIO.input(GPIO_ButtonL_PIN) == True ):
-    feed_cat("Zelda")
+  # elif ( GPIO.input(GPIO_ButtonL_PIN) == True ):
+  #  feed_cat("Zelda")
 
   # If only the right button is pushed, feed from the right hopper for half a second.
-  elif ( GPIO.input(GPIO_ButtonR_PIN) == True ):
-    feed_cat("Thor")
+  #elif ( GPIO.input(GPIO_ButtonR_PIN) == True ):
+  #  feed_cat("Thor")
 
   #feed_time("22","10")
   #if time.strftime("%H") == "20" and time.strftime("%M") == "30":
