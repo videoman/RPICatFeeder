@@ -153,11 +153,11 @@ GPIO.output(BeeperPin, False)
 #  YMMV depending on the feeder.
 def feed_cat(CatName):
   if (CatName == "Thor"):
-    feed_thing("Right",1.3)
+    feed_thing("Right",1.1)
     time.sleep(.25)
 
   if (CatName == "Zelda"):
-    feed_thing("Left",1.3)
+    feed_thing("Left",1.1)
     time.sleep(.25)
 
 # This setup is to feed the cat at a specific time.
@@ -182,6 +182,7 @@ GPIO.add_event_detect(GPIO_ButtonR_PIN, GPIO.RISING, callback=RightFeedButton, b
 
 # This is the main loop where we wait for stuff to happen!
 while True:
+  time.sleep(1)
   # First off, lets turn the LEDs for the buttons on!
   GPIO.output(GPIO_ButtonL_LED_PIN, True)
   GPIO.output(GPIO_ButtonR_LED_PIN, True)
@@ -194,7 +195,7 @@ while True:
   #  feed_cat("Thor")
   #  time.sleep(60)
  
-  if time.strftime("%H") == "10" and time.strftime("%M") == "30":
+  if time.strftime("%H") == "21" and time.strftime("%M") == "38":
     print "Cat Feeing time!"
     feed_cat("Zelda")
     time.sleep(.5)
