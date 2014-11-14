@@ -3,7 +3,7 @@
 # Example for Hack Factory Raspberry Pi Class.
 # David M. N. Bryan, dave@drstrangelove.net
 #
-# This is licend under creative commons license:
+# This is licenced under creative commons license:
 # http://creativecommons.org/licenses/by-nc-sa/3.0/
 # Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
 
@@ -13,8 +13,18 @@ import time
 # We need to be able to tell time for the cats.
 import datetime 
 
+from datetime import datetime
+
 # Import the Raspberry Pi GPIO library.
 import RPi.GPIO as GPIO
+
+#Astral will tell us when the sun sets, and that's when we want to feed the kitties
+from astral import *
+from pytz import timezone
+
+#Setup the location and lat/lon for our calculations
+a = Astral()
+location = a['Minneapolis']
 
 # I have the Servero input ping (White wires) setup
 # for the fllowing pins
@@ -175,10 +185,17 @@ def LeftFeedButton(GPIO_ButtonL_PIN):
 def RightFeedButton(GPIO_ButtonR_PIN):
   feed_cat("Thor")
 
+def whenisdusk():
+  dusk = location.dusk(local=True, date=None)
+  dusk2 = dusk.replace(tzinfo=None)
+  return dusk2
+
 # This works great if you don't have any static-electricty in the enviroment.
 # This function will detect when the button is pushed, and call the approiate function.
 GPIO.add_event_detect(GPIO_ButtonL_PIN, GPIO.RISING, callback=LeftFeedButton, bouncetime=500)
 GPIO.add_event_detect(GPIO_ButtonR_PIN, GPIO.RISING, callback=RightFeedButton, bouncetime=500)
+
+dusk = whenisdusk()
 
 # This is the main loop where we wait for stuff to happen!
 while True:
@@ -187,16 +204,17 @@ while True:
   GPIO.output(GPIO_ButtonL_LED_PIN, True)
   GPIO.output(GPIO_ButtonR_LED_PIN, True)
 
-  # Uncomment the stuff below if you want to feed your cats twice a day.
-  #if time.strftime("%H") == "20" and time.strftime("%M") == "30":
-  #  print "Cat Feeing time!"
-  #  feed_cat("Zelda")
-  #  time.sleep(.5)
-  #  feed_cat("Thor")
-  #  time.sleep(60)
- 
-  if time.strftime("%H") == "21" and time.strftime("%M") == "38":
-    print "Cat Feeing time!"
+  #Update the dusk time each day
+  if time.strftime("%H") == "03" and time.strftime("%M") == "01" and time.strftime("%S") == "01":
+    dusk = whenisdusk()
+
+  now = datetime.now()
+  #if datetime.now(timezone('US/Central')) == dusk:
+  #if time.strftime("%H") == "21" and time.strftime("%M") == "38":
+  #if time.strftime("%H") == dusk2.strftime("%H") and time.strftime("%M") == dusk2.strftime("%M") and time.strftime("%S") == dusk2.strftime("%S"):
+  if now == dusk:
+    feedtime=datetime.now(timezone('US/Central'))
+    print "Cat Feeing time at %d !" % feedtime
     feed_cat("Zelda")
     time.sleep(.5)
     feed_cat("Thor")
