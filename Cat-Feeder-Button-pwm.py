@@ -208,7 +208,7 @@ while True:
   if time.strftime("%H") == "03" and time.strftime("%M") == "01" and time.strftime("%S") == "01":
     dusk = whenisdusk()
 
-  now = datetime.now()
+  now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
   #if datetime.now(timezone('US/Central')) == dusk:
   #if time.strftime("%H") == "21" and time.strftime("%M") == "38":
   #if time.strftime("%H") == dusk2.strftime("%H") and time.strftime("%M") == dusk2.strftime("%M") and time.strftime("%S") == dusk2.strftime("%S"):
