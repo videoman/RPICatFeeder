@@ -187,7 +187,8 @@ def RightFeedButton(GPIO_ButtonR_PIN):
 
 def whenisdusk():
   dusk = location.dusk(local=True, date=None)
-  dusk2 = dusk.replace(tzinfo=None)
+  #dusk2 = dusk.replace(tzinfo=None)
+  dusk2 = dusk.strftime("%Y-%m-%d %H:%M:%S")
   return dusk2
 
 # This works great if you don't have any static-electricty in the enviroment.
@@ -199,7 +200,7 @@ dusk = whenisdusk()
 
 # This is the main loop where we wait for stuff to happen!
 while True:
-  time.sleep(1)
+  time.sleep(.5)
   # First off, lets turn the LEDs for the buttons on!
   GPIO.output(GPIO_ButtonL_LED_PIN, True)
   GPIO.output(GPIO_ButtonR_LED_PIN, True)
