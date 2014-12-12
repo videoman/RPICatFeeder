@@ -18,7 +18,7 @@ from email_settings import *
 # We need to be able to tell time for the cats.
 import datetime 
 
-from datetime import datetime
+from datetime import date, timedelta, datetime
 
 # Import the Raspberry Pi GPIO library.
 import RPi.GPIO as GPIO
@@ -33,7 +33,10 @@ location = a['Minneapolis']
 
 # Setup the Email stuff.
 def send_email(feedtime):
-  feedtime = feedtime.strftime("%Y-%m-%d %H:%M:%S")
+  feedtime = feedtime.strftime("%I:%M%p")
+  d2 = datetime.today() + timedelta(days=1)
+  tomorrowfeedtime = location.dusk(local=True, date=d2)
+  tomorrowfeedtime = tomorrowfeedtime.strftime("%I:%M%p")
   to = email_to
   gmail_user = email_gmail_user
   gmail_pwd = email_gmail_pwd
@@ -42,9 +45,9 @@ def send_email(feedtime):
   smtpserver.starttls()
   smtpserver.ehlo
   smtpserver.login(gmail_user, gmail_pwd)
-  header = 'To:' + to + '\n' + 'From: ' + gmail_user + '\n' + 'Subject: Cats Have been feed at: ' + feedtime + ' \n'
+  header = 'To:' + to + '\n' + 'From: ' + gmail_user + '\n' + 'Subject: I fed the cats at ' + feedtime + ' today\n'
   print header
-  msg = header + '\n I fed the cats at: ' + str(feedtime) + '\n\n'
+  msg = header + '\n I fed the cats at ' + feedtime + 'today.\n\nTomorrow I will fed the cats at ' + tomorrowfeedtime + '\n\n'
   smtpserver.sendmail(gmail_user, to, msg)
   print 'done!'
   smtpserver.close()
