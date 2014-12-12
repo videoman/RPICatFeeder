@@ -10,6 +10,11 @@
 # It's a timeywimey thing.
 import time
 
+#Grab the SMTP library
+import smtplib
+# This file conttains email_to, email_gmail_user, and email_gmail_pwd
+from email_settings import *
+
 # We need to be able to tell time for the cats.
 import datetime 
 
@@ -25,6 +30,24 @@ from pytz import timezone
 #Setup the location and lat/lon for our calculations
 a = Astral()
 location = a['Minneapolis']
+
+# Setup the Email stuff.
+def send_email(feedtime):
+  feedtime = feedtime.strftime("%Y-%m-%d %H:%M:%S")
+  to = email_to
+  gmail_user = email_gmail_user
+  gmail_pwd = email_gmail_pwd
+  smtpserver = smtplib.SMTP("smtp.gmail.com",587)
+  smtpserver.ehlo()
+  smtpserver.starttls()
+  smtpserver.ehlo
+  smtpserver.login(gmail_user, gmail_pwd)
+  header = 'To:' + to + '\n' + 'From: ' + gmail_user + '\n' + 'Subject: Cats Have been feed at: ' + feedtime + ' \n'
+  print header
+  msg = header + '\n I fed the cats at: ' + str(feedtime) + '\n\n'
+  smtpserver.sendmail(gmail_user, to, msg)
+  print 'done!'
+  smtpserver.close()
 
 # I have the Servero input ping (White wires) setup
 # for the fllowing pins
@@ -187,6 +210,7 @@ def RightFeedButton(GPIO_ButtonR_PIN):
 
 def whenisdusk():
   dusk = location.dusk(local=True, date=None)
+  #dusk = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
   #dusk2 = dusk.replace(tzinfo=None)
   dusk2 = dusk.strftime("%Y-%m-%d %H:%M:%S")
   return dusk2
@@ -196,29 +220,28 @@ def whenisdusk():
 GPIO.add_event_detect(GPIO_ButtonL_PIN, GPIO.RISING, callback=LeftFeedButton, bouncetime=500)
 GPIO.add_event_detect(GPIO_ButtonR_PIN, GPIO.RISING, callback=RightFeedButton, bouncetime=500)
 
+# Set the initial dusk time
 dusk = whenisdusk()
+
+# First off, lets turn the LEDs for the buttons on!
+GPIO.output(GPIO_ButtonL_LED_PIN, True)
+GPIO.output(GPIO_ButtonR_LED_PIN, True)
 
 # This is the main loop where we wait for stuff to happen!
 while True:
-  time.sleep(.5)
-  # First off, lets turn the LEDs for the buttons on!
-  GPIO.output(GPIO_ButtonL_LED_PIN, True)
-  GPIO.output(GPIO_ButtonR_LED_PIN, True)
-
-  #Update the dusk time each day
-  if time.strftime("%H") == "03" and time.strftime("%M") == "01" and time.strftime("%S") == "01":
-    dusk = whenisdusk()
-
   now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-  #if datetime.now(timezone('US/Central')) == dusk:
-  #if time.strftime("%H") == "21" and time.strftime("%M") == "38":
-  #if time.strftime("%H") == dusk2.strftime("%H") and time.strftime("%M") == dusk2.strftime("%M") and time.strftime("%S") == dusk2.strftime("%S"):
   if now == dusk:
     feedtime=datetime.now(timezone('US/Central'))
     print "Cat Feeing time at %d !" % feedtime
     feed_cat("Zelda")
     time.sleep(.5)
     feed_cat("Thor")
+    send_email(feedtime)
     time.sleep(60)
 
+  #Update the dusk time each day
+  if time.strftime("%H") == "03" and time.strftime("%M") == "01" and time.strftime("%S") == "01":
+    dusk = whenisdusk()
+
 #  If nothing to do, go back to the loop... forever...
+  time.sleep(1)
