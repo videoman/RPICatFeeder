@@ -33,10 +33,10 @@ location = a['Minneapolis']
 
 # Setup the Email stuff.
 def send_email(feedtime):
-  feedtime = feedtime.strftime("%I:%M%p")
+  feedtime = feedtime.strftime("%a %b %m at %I:%M%p")
   d2 = datetime.today() + timedelta(days=1)
   tomorrowfeedtime = location.dusk(local=True, date=d2)
-  tomorrowfeedtime = tomorrowfeedtime.strftime("%I:%M%p")
+  tomorrowfeedtime = tomorrowfeedtime.strftime("%a %b %m at %I:%M%p")
   to = email_to
   gmail_user = email_gmail_user
   gmail_pwd = email_gmail_pwd
@@ -45,11 +45,12 @@ def send_email(feedtime):
   smtpserver.starttls()
   smtpserver.ehlo
   smtpserver.login(gmail_user, gmail_pwd)
-  header = 'To:' + to + '\n' + 'From: ' + gmail_user + '\n' + 'Subject: I fed the cats at ' + feedtime + ' today\n'
-  print header
-  msg = header + '\n I fed the cats at ' + feedtime + 'today.\n\nTomorrow I will fed the cats at ' + tomorrowfeedtime + '\n\n'
+  header = 'To:' + to + '\n' + 'From: ' + gmail_user + '\n' + 'Subject: CatFeeder: I fed the cats on ' + feedtime + '\n'
+  #print header
+  msg = header + '\n I fed the cats on ' + feedtime + ' today.\n\nTomorrow I will fed the cats on ' + tomorrowfeedtime + '\n\n'
+  print msg
   smtpserver.sendmail(gmail_user, to, msg)
-  print 'done!'
+  print 'email sent!'
   smtpserver.close()
 
 # I have the Servero input ping (White wires) setup
@@ -189,11 +190,11 @@ GPIO.output(BeeperPin, False)
 #  YMMV depending on the feeder.
 def feed_cat(CatName):
   if (CatName == "Thor"):
-    feed_thing("Right",1.1)
+    feed_thing("Right",1.01)
     time.sleep(.25)
 
   if (CatName == "Zelda"):
-    feed_thing("Left",1.1)
+    feed_thing("Left",1.01)
     time.sleep(.25)
 
 # This setup is to feed the cat at a specific time.
@@ -213,7 +214,7 @@ def RightFeedButton(GPIO_ButtonR_PIN):
 
 def whenisdusk():
   dusk = location.dusk(local=True, date=None)
-  #dusk = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+  #dusk = datetime.now()
   #dusk2 = dusk.replace(tzinfo=None)
   dusk2 = dusk.strftime("%Y-%m-%d %H:%M:%S")
   return dusk2
@@ -232,15 +233,27 @@ GPIO.output(GPIO_ButtonR_LED_PIN, True)
 
 # This is the main loop where we wait for stuff to happen!
 while True:
+  # What time is it?
   now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+  # We set the dusk time really early this morning. If it's true, then we should feed the casts.
   if now == dusk:
+    # Setting a varaible to use when we send email about what time we fed the cats.
     feedtime=datetime.now(timezone('US/Central'))
-    print "Cat Feeing time at %d !" % feedtime
+    print "Cat Feeding time %s" % feedtime.strftime("%Y-%m-%d %H:%M:%S")
+    # Call the function "feed_cat" to feed the cats.
     feed_cat("Zelda")
-    time.sleep(.5)
     feed_cat("Thor")
     send_email(feedtime)
     time.sleep(60)
+
+  #Manual single time feed - set at a specific time
+  #if time.strftime("%H") == "19" and time.strftime("%M") == "01" and time.strftime("%S") == "01":
+  #  feedtime=datetime.now(timezone('US/Central'))
+  #  print "Cat Feeding time %s" % feedtime.strftime("%Y-%m-%d %H:%M:%S")
+  #  feed_cat("Zelda")
+  #  feed_cat("Thor")
+  #  send_email(feedtime)
+  #  time.sleep(60)
 
   #Update the dusk time each day
   if time.strftime("%H") == "03" and time.strftime("%M") == "01" and time.strftime("%S") == "01":
