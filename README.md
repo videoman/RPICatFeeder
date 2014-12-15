@@ -19,14 +19,15 @@ astral
 pytz
 GPIO
 
-To install them do:
-sudo apt-get install python-pip
-sudo pip install astral
-sudo pip install pytz 
+Installation
+-----------
+     sudo apt-get install python-pip
+     sudo pip install astral
+     sudo pip install pytz 
+     sudo apt-get install python-rpi.gpio
 
-sudo apt-get install python-rpi.gpio
-
-Email setup:
+Email setup
+----------
 To setup email, enter your info in the main program file, and then create a file named email_settings.py
 Then add the following lines to the email_settings.py file:
 email_to = 'youremailATyourdomain'
