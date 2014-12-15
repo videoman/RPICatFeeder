@@ -16,9 +16,9 @@ This code is based on the python-rpi.gpio modules version >=0.5.4-1.
 You might have to manually remove the old GPIO library to get this work.
 
 This program also requires adding the following python modules:
-astral
-pytz
-GPIO
+* [astral] (https://pythonhosted.org/astral/module.html)
+* [pytz] (http://pytz.sourceforge.net)
+* [GPIO] (http://sourceforge.net/projects/raspberry-gpio-python/)
 
 Installation
 -----------
