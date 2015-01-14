@@ -35,10 +35,11 @@ Email setup
 ----------
 To setup email, in the RPICatFeeder directory, create a file named email_settings.py.
 Then add the following lines to the email_settings.py file:
-     cat > email_settings.py
-     email_to = 'youremailATyourdomain'
-     email_gmail_user = 'gmail or google apps userid'
-     email_gmail_pwd = 'gmail or google apps password'
+     
+    cat > email_settings.py
+    email_to = 'youremailATyourdomain'
+    email_gmail_user = 'gmail or google apps userid'
+    email_gmail_pwd = 'gmail or google apps password'
 
 
 
