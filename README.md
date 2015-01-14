@@ -33,11 +33,12 @@ You can run the main script (Cat-Feeder-Button-pwm.py) in a secreen/byobu or eve
 
 Email setup
 ----------
-To setup email, enter your info in the main program file for the server and what now, and then create a file named email_settings.py
+To setup email, in the RPICatFeeder directory, create a file named email_settings.py.
 Then add the following lines to the email_settings.py file:
-email_to = 'youremailATyourdomain'
-email_gmail_user = 'gmail or google apps userid'
-email_gmail_pwd = 'gmail or google apps password'
+     cat > email_settings.py
+     email_to = 'youremailATyourdomain'
+     email_gmail_user = 'gmail or google apps userid'
+     email_gmail_pwd = 'gmail or google apps password'
 
 
 
