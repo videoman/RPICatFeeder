@@ -32,8 +32,8 @@ a = Astral()
 location = a['Minneapolis']
 
 # Setup the Email stuff.
-def send_email(feedtime):
-  feedtime = feedtime.strftime("%a %b %m at %I:%M%p")
+def send_email(hopper,feedtime):
+  feedtime = feedtime.strftime("%a %b %d at %I:%M%p")
   d2 = datetime.today() + timedelta(days=1)
   tomorrowfeedtime = location.dusk(local=True, date=d2)
   tomorrowfeedtime = tomorrowfeedtime.strftime("%a %b %m at %I:%M%p")
@@ -47,7 +47,7 @@ def send_email(feedtime):
   smtpserver.login(gmail_user, gmail_pwd)
   header = 'To:' + to + '\n' + 'From: ' + gmail_user + '\n' + 'Subject: CatFeeder: I fed the cats on ' + feedtime + '\n'
   #print header
-  msg = header + '\n I fed the cats on ' + feedtime + ' today.\n\nTomorrow I will fed the cats on ' + tomorrowfeedtime + '\n\n'
+  msg = header + '\nI fed the cats using ' + hopper + ' hopper(s)\n\nThey were fed on ' + feedtime + '.\n\nI will automaticly fed the cats again on ' + tomorrowfeedtime + '.\n\n'
   print msg
   smtpserver.sendmail(gmail_user, to, msg)
   print 'email sent!'
@@ -190,11 +190,11 @@ GPIO.output(BeeperPin, False)
 #  YMMV depending on the feeder.
 def feed_cat(CatName):
   if (CatName == "Thor"):
-    feed_thing("Right",1.01)
+    feed_thing("Right",1.1)
     time.sleep(.25)
 
   if (CatName == "Zelda"):
-    feed_thing("Left",1.01)
+    feed_thing("Left",1.1)
     time.sleep(.25)
 
 # This setup is to feed the cat at a specific time.
@@ -208,13 +208,17 @@ def feed_time(Feed_hour,Feed_minute):
 
 def LeftFeedButton(GPIO_ButtonL_PIN):
   feed_cat("Zelda")
+  feedtime=datetime.now(timezone('US/Central'))
+  send_email("the left",feedtime)
 
 def RightFeedButton(GPIO_ButtonR_PIN):
   feed_cat("Thor")
+  feedtime=datetime.now(timezone('US/Central'))
+  send_email("the right",feedtime)
 
 def whenisdusk():
   dusk = location.dusk(local=True, date=None)
-  #dusk = datetime.now()
+  #dusk = datetime.now() + timedelta(minutes=1)
   #dusk2 = dusk.replace(tzinfo=None)
   dusk2 = dusk.strftime("%Y-%m-%d %H:%M:%S")
   return dusk2
@@ -226,6 +230,7 @@ GPIO.add_event_detect(GPIO_ButtonR_PIN, GPIO.RISING, callback=RightFeedButton, b
 
 # Set the initial dusk time
 dusk = whenisdusk()
+print "I will feed the cats on %s" % dusk
 
 # First off, lets turn the LEDs for the buttons on!
 GPIO.output(GPIO_ButtonL_LED_PIN, True)
@@ -243,7 +248,7 @@ while True:
     # Call the function "feed_cat" to feed the cats.
     feed_cat("Zelda")
     feed_cat("Thor")
-    send_email(feedtime)
+    send_email("both",feedtime)
     time.sleep(60)
 
   #Manual single time feed - set at a specific time
