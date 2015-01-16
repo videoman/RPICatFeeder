@@ -12,7 +12,7 @@ import time
 
 #Grab the SMTP library
 import smtplib
-# This file conttains email_to, email_gmail_user, and email_gmail_pwd
+# This file email_settings.py conttains the varaibles of email_to, email_gmail_user, and email_gmail_pwd
 from email_settings import *
 
 # We need to be able to tell time for the cats.
