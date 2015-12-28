@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Example for Hack Factory Raspberry Pi Class.
+# Example for my Raspberry Pi Class.
 # David M. N. Bryan, dave@drstrangelove.net
 #
 # This is licenced under creative commons license:
